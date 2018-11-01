@@ -11,9 +11,6 @@ if (Gem.win_platform?)
   end
 end
 
-CLOUDINESS = {-1 => 'туман', 0 => 'ясно', 1 => 'малооблачно', 2 => 'облачно', 3 => 'пасмурно'}
-TOD = {0 => 'ночь', 1 => 'утро', 2 => 'день', 3 => 'вечер'}
-
 uri = URI.parse('https://xml.meteoservice.ru/export/gismeteo/point/312.xml')
 
 response = Net::HTTP.get_response(uri)
