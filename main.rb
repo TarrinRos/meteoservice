@@ -1,7 +1,4 @@
-require 'net/http'
-require 'uri'
-require 'rexml/document'
-require 'date'
+
 
 if (Gem.win_platform?)
   Encoding.default_external = Encoding.find(Encoding.locale_charmap)
@@ -19,8 +16,7 @@ uri = URI.parse('https://xml.meteoservice.ru/export/gismeteo/point/312.xml')
 
 response = Net::HTTP.get_response(uri)
 
-doc = REXML::Document.new(response.body)
-
+service = MeteoService.get_data_from_xml(response)
 
 def return_data_from_xml(forecast)
   raw_date = "#{forecast.attributes['day']}.#{forecast.attributes['month']}.#{forecast.attributes['year']}"
@@ -42,11 +38,7 @@ def return_data_from_xml(forecast)
   time_of_day_index = forecast.attributes['tod'].to_i
   time_of_day = TOD[time_of_day_index]
 
-  # Возвращает многострочный текст
-  <<~EOM
-    #{parsed_date}, #{time_of_day}
-    #{min_temp}..#{max_temp}, ветeр #{max_wind} м/с, #{clouds}
-  EOM
+
 end
 
 # Вытаскивает название города и преобразует его из "%D0%A0%D0" в читаемый вид
