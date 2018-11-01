@@ -1,6 +1,6 @@
 require 'net/http'
 require 'uri'
-require_relative 'lib/meteo_service'
+require_relative 'lib/meteo_collector'
 
 if (Gem.win_platform?)
   Encoding.default_external = Encoding.find(Encoding.locale_charmap)
@@ -15,10 +15,10 @@ uri = URI.parse('https://xml.meteoservice.ru/export/gismeteo/point/312.xml')
 
 response = Net::HTTP.get_response(uri)
 
-service = MeteoService.get_data_from_xml(response)
+collector = MeteoCollector.get_data_from_xml(response)
 
-puts service.city_name
+puts collector.city_name
 
-service.node.each do |forecast|
+collector.node.each do |forecast|
   puts MeteoData.new(forecast)
 end

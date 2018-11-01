@@ -15,11 +15,12 @@ class MeteoData
     @clouds = get_clouds(forecast)
   end
 
-  # Возвращает дату в формате ДД.ММ.ГГГГ или "Сегодня", если дата совпадает с текушей
+  # Возвращает дату в формате ДД.ММ.ГГГГ
   def get_parsed_date(forecast)
     raw_date = "#{forecast.attributes['day']}.#{forecast.attributes['month']}.#{forecast.attributes['year']}"
     parsed_date = Date.parse(raw_date).strftime('%d.%m.%Y')
 
+    # Возвращает "Сегодня", если дата совпадает с текушей
     parsed_date == Date.today ? parsed_date = 'Сегодня' : parsed_date
     parsed_date
   end
