@@ -15,12 +15,13 @@ class MeteoService
     @city_name = get_city_name(doc)
   end
 
+  # Передает каждый выбранный элемент в массив
   def to_a(doc)
     doc.root.elements['REPORT/TOWN'].elements.to_a
   end
 
+  # Вытаскивает название города и преобразует его из "%D0%A0%D0" в читаемый вид
   def get_city_name(doc)
-    # Вытаскивает название города и преобразует его из "%D0%A0%D0" в читаемый вид
     URI.unescape(doc.root.elements['REPORT/TOWN'].attributes['sname'])
   end
 end
