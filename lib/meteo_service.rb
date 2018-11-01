@@ -1,11 +1,9 @@
-require 'net/http'
 require 'uri'
 require 'rexml/document'
-require 'date'
+require_relative 'meteo_data'
 
 class MeteoService
-  CLOUDINESS = {-1 => 'туман', 0 => 'ясно', 1 => 'малооблачно', 2 => 'облачно', 3 => 'пасмурно'}
-  TOD = {0 => 'ночь', 1 => 'утро', 2 => 'день', 3 => 'вечер'}
+  attr_reader :node, :city_name
 
   def self.get_data_from_xml(response)
     doc = REXML::Document.new(response.body)
@@ -13,14 +11,16 @@ class MeteoService
   end
 
   def initialize(doc)
-
+    @node = to_a(doc)
+    @city_name = get_city_name(doc)
   end
 
-  def to_s
-    # Возвращает многострочный текст
-    <<~EOM
-    #{parsed_date}, #{time_of_day}
-    #{min_temp}..#{max_temp}, ветeр #{max_wind} м/с, #{clouds}
-    EOM
+  def to_a(doc)
+    doc.root.elements['REPORT/TOWN'].elements.to_a
+  end
+
+  def get_city_name(doc)
+    # Вытаскивает название города и преобразует его из "%D0%A0%D0" в читаемый вид
+    URI.unescape(doc.root.elements['REPORT/TOWN'].attributes['sname'])
   end
 end

@@ -1,4 +1,6 @@
-
+require 'net/http'
+require 'uri'
+require_relative 'lib/meteo_service'
 
 if (Gem.win_platform?)
   Encoding.default_external = Encoding.find(Encoding.locale_charmap)
@@ -18,37 +20,8 @@ response = Net::HTTP.get_response(uri)
 
 service = MeteoService.get_data_from_xml(response)
 
-def return_data_from_xml(forecast)
-  raw_date = "#{forecast.attributes['day']}.#{forecast.attributes['month']}.#{forecast.attributes['year']}"
-  parsed_date = Date.parse(raw_date).strftime('%d.%m.%Y')
+puts service.city_name
 
-  parsed_date == Date.today ? parsed_date = 'Сегодня' : parsed_date
-
-  min_temp = forecast.elements['TEMPERATURE'].attributes['min'].to_i
-  max_temp = forecast.elements['TEMPERATURE'].attributes['max'].to_i
-
-  min_temp = "+#{min_temp}" if min_temp > 0
-  max_temp = "+#{max_temp}" if max_temp > 0
-
-  max_wind = forecast.elements['WIND'].attributes['max']
-
-  cloudiness_index = forecast.elements['PHENOMENA'].attributes['cloudiness'].to_i
-  clouds = CLOUDINESS[cloudiness_index]
-
-  time_of_day_index = forecast.attributes['tod'].to_i
-  time_of_day = TOD[time_of_day_index]
-
-
-end
-
-# Вытаскивает название города и преобразует его из "%D0%A0%D0" в читаемый вид
-city_name = URI.unescape(doc.root.elements['REPORT/TOWN'].attributes['sname'])
-puts city_name
-
-node = doc.root.elements['REPORT/TOWN'].elements.to_a
-
-node.each do |forecast|
-  puts
-
-  puts return_data_from_xml(forecast)
+service.node.each do |forecast|
+  puts MeteoData.new(forecast)
 end
