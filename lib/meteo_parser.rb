@@ -15,6 +15,8 @@ class MeteoParser
     @city_name = get_city_name(doc)
   end
 
+  private
+
   # Передает каждый выбранный элемент в массив
   def to_a(doc)
     doc.root.elements['REPORT/TOWN'].elements.to_a

@@ -15,6 +15,17 @@ class MeteoData
     @clouds = get_clouds(forecast)
   end
 
+  # Возвращает все данные в многострочном формате
+  def to_s
+    <<~EOM
+
+    #{parsed_date}, #{time_of_day}
+    #{min_temp}..#{max_temp}, ветeр #{max_wind} м/с, #{clouds}
+    EOM
+  end
+
+  private
+
   # Возвращает дату в формате ДД.ММ.ГГГГ
   def get_parsed_date(forecast)
     raw_date = "#{forecast.attributes['day']}.#{forecast.attributes['month']}.#{forecast.attributes['year']}"
@@ -52,14 +63,5 @@ class MeteoData
   def get_clouds(forecast)
     cloudiness_index = forecast.elements['PHENOMENA'].attributes['cloudiness'].to_i
     CLOUDINESS[cloudiness_index]
-  end
-
-  # Возвращает все данные в многострочном формате
-  def to_s
-    <<~EOM
-
-      #{parsed_date}, #{time_of_day}
-      #{min_temp}..#{max_temp}, ветeр #{max_wind} м/с, #{clouds}
-    EOM
   end
 end
