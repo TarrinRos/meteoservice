@@ -1,6 +1,6 @@
 require 'net/http'
 require 'uri'
-require_relative 'lib/meteo_collector'
+require_relative 'lib/meteo_parser'
 
 if (Gem.win_platform?)
   Encoding.default_external = Encoding.find(Encoding.locale_charmap)
@@ -26,8 +26,7 @@ towns_list.each_with_index do |town, index|
 end
 
 user_choice = STDIN.gets.to_i
-user_choice -= 1
-choiced_town = towns_list[user_choice]
+choiced_town = towns_list[user_choice - 1]
 
 # Формирует ссылку на XML файл исходя из выбранного города и отправляет запрос
 uri = URI.parse("https://xml.meteoservice.ru/export/gismeteo/point/#{TOWNS[choiced_town]}.xml")
@@ -35,10 +34,10 @@ uri = URI.parse("https://xml.meteoservice.ru/export/gismeteo/point/#{TOWNS[choic
 # Получает ответ от сервера по указаной ссылке
 response = Net::HTTP.get_response(uri)
 
-collector = MeteoCollector.get_data_from_xml(response)
+collector = MeteoParser.get_data_from_xml(response)
 
+# Выводит название города и строны
 puts collector.city_name
 
-collector.node.each do |forecast|
-  puts MeteoData.new(forecast)
-end
+# Выводит строку с сформированными данными прогноза
+puts collector.node.map {|forecast| MeteoData.new(forecast)}

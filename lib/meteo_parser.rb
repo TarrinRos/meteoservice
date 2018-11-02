@@ -2,7 +2,7 @@ require 'uri'
 require 'rexml/document'
 require_relative 'meteo_data'
 
-class MeteoCollector
+class MeteoParser
   attr_reader :node, :city_name
 
   def self.get_data_from_xml(response)
